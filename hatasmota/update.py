@@ -70,6 +70,10 @@ def is_stock_build(version_str: str) -> bool:
     version_num_str = match.group("version")
     variant = match.group("variant")
 
+    # Normalize variant: versions >= 15.0 may prefix standard variants with 'release-'
+    if variant.startswith("release-"):
+        variant = variant[8:]
+
     # Safety check: Versions older than 9.1.0 require manual migration paths
     try:
         version_parts = tuple(int(p) for p in version_num_str.split("."))
@@ -88,14 +92,17 @@ def is_stock_build(version_str: str) -> bool:
 
     if variant in OFFICIAL_VARIANTS:
         return True
+
     # Localized language builds (e.g., tasmota-DE, tasmota32-DE)
     if re.match(r"^(tasmota|tasmota32)-[A-Z]{2}$", variant):
         return True
+
     # Prefixed official variants (e.g., tasmota-sensors, tasmota32-display)
     if variant.startswith("tasmota-") and variant[8:] in OFFICIAL_VARIANTS:
         return True
     if variant.startswith("tasmota32-") and variant[10:] in OFFICIAL_VARIANTS:
         return True
+
     return False
 
 
