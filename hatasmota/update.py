@@ -186,13 +186,12 @@ class TasmotaUpdate(TasmotaAvailability, TasmotaEntity):
             # Status 2: {"StatusFWR":{"Version":"12.3.1(tasmota)","BuildDateTime":"..."}}
             # We look for StatusFWR.Version
             if version := get_value_by_path(payload, ["StatusFWR", "Version"]):
-                if is_stock_build(version):
-                    self._on_state_callback(version)
-                else:
+                self._on_state_callback(version)
+                if not is_stock_build(version):
                     match = VERSION_VARIANT_PATTERN.match(version)
                     variant = match.group("variant") if match else "unknown"
                     _LOGGER.debug(
-                        "[%s] Custom firmware build detected (variant: %s). Skipping update check.",
+                        "[%s] Custom firmware build detected (variant: %s).",
                         self._cfg.mac,
                         variant,
                     )
