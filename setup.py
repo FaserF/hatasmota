@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages  # type: ignore[import-untyped]
 
-
 long_description = open("README.md").read()
 
 setup(
